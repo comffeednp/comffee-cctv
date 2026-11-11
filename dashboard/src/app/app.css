@@ -1,0 +1,107 @@
+/* Layout helpers for the app frame and the setup, sign-in, location and settings screens.
+   Colours, type and shapes come from styles/theme.css tokens only. */
+
+/* Signed-out screens (setup, sign-in): one narrow column. */
+.auth-main {
+  max-width: 520px;
+}
+
+/* First load and route redirects. */
+.app-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+/* 2-step QR code: dark modules on a light well so every authenticator app can scan it. */
+.qr {
+  display: block;
+  width: 208px;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-control);
+}
+.qr-light {
+  fill: var(--color-cream);
+}
+.qr-dark {
+  fill: var(--color-ink);
+}
+
+/* A labelled checkbox ("I saved the file"). */
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-height: var(--tap);
+  padding-block: var(--space-2);
+  cursor: pointer;
+}
+.check input {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  accent-color: var(--color-amber);
+}
+.check input:focus-visible {
+  outline: 2px solid var(--color-amber);
+  outline-offset: 2px;
+}
+
+/* Numbered how-to steps inside a section. */
+.steps {
+  margin: 0;
+  padding-inline-start: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Label and value pairs in a card (storage). */
+.pairs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.pairs > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+/* A row of buttons that wraps on phones. */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+.actions-end {
+  justify-content: flex-end;
+}
+
+/* Plain warning line. */
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+.notice .icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* A section that a "next step" row jumps to: lands below the sticky top bar. */
+.scroll-target {
+  scroll-margin-top: calc(var(--topbar-h) + var(--space-4));
+}
+
+/* A group of radio choices with no browser frame. */
+.plain-fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}

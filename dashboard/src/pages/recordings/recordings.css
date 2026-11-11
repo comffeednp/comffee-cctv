@@ -1,0 +1,20 @@
+/* All footage. Colours, type and shapes come from styles/theme.css tokens only. */
+
+/* Camera and time fields beside the calendar from 768 px, stacked below. */
+.rec-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+@media (min-width: 768px) {
+  .rec-filters {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.rec-range {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}

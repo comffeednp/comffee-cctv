@@ -1,0 +1,51 @@
+# Comffee CCTV media server (MediaMTX): pulls camera streams, records, serves live video.
+# deploy/install.sh fills the {{...}} placeholders and installs this file into /etc/systemd/system.
+[Unit]
+Description=Comffee CCTV media server (MediaMTX)
+Documentation=file://{{APP_DIR}}/docs/OPERATIONS.md
+After=network-online.target wg-quick@wg0.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=comffee-cctv
+Group=comffee-cctv
+WorkingDirectory={{DATA_DIR}}/raw
+Environment=TZ=UTC
+ExecStart={{MEDIAMTX_BIN}} {{MEDIAMTX_CONFIG}}
+Restart=always
+RestartSec=3
+TimeoutStopSec=30
+UMask=0077
+LimitNOFILE=65536
+
+# No capabilities at all; it only uses ports above 1024.
+AmbientCapabilities=
+CapabilityBoundingSet=
+NoNewPrivileges=yes
+
+# File system: everything read-only. The data folder is replaced by an empty read-only folder,
+# so the secrets and the database in it are out of reach; only raw/ (where recordings land) is
+# mounted back in, writable. install.sh creates raw/ before the first start.
+ProtectSystem=strict
+TemporaryFileSystem={{DATA_DIR}}:ro
+BindPaths={{DATA_DIR}}/raw
+PrivateTmp=yes
+ProtectHome=yes
+PrivateDevices=yes
+
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictSUIDSGID=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+LockPersonality=yes
+SystemCallArchitectures=native
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,52 @@
+#cloud-config
+# Comffee CCTV: installs the hub on a new Ubuntu 24.04 server on its first boot, with nobody logged in.
+#
+# The desktop app renders this file and passes it as the server's "user data" (on Oracle Cloud:
+# the "cloud-init script" of a new instance). It replaces these placeholders, each kept inside its
+# double quotes below:
+#   {{REPO_URL}}    https git address of the Comffee CCTV code, for example https://github.com/<owner>/comffee-cctv.git
+#                   It must be public: the server downloads it without signing in.
+#   {{REPO_REF}}    release tag or branch to install, for example v1.0.0 or main (it must exist there)
+#   {{SETUP_CODE}}  one-time setup code for the owner account: base32 (A-Z, 2-7), 26 to 64 characters.
+#                   The hub stores only its hash; the owner types it on https://<server>/setup.
+# The values must not contain double quotes, backslashes or line breaks (valid values never do).
+#
+# What happens: git is installed, the code is cloned into /opt/comffee-cctv at the chosen version,
+# and deploy/install.sh runs with "--host auto" (the dashboard address becomes
+# <public-ip-with-dashes>.sslip.io). Everything is logged to /var/log/comffee-cctv-install.log
+# (readable by root only). The install takes about 10 to 20 minutes; the dashboard answers at
+# https://<public-ip-with-dashes>.sslip.io/api/setup/status once it is done. The log ends with
+# "Comffee CCTV install finished" or "Comffee CCTV install FAILED" and the reason.
+#
+# The cloud firewall (Oracle: the VCN security list) must still allow TCP 80 and 443 and UDP 51820
+# and 8189; see docs/ORACLE-SETUP.md.
+
+package_update: true
+packages:
+  - git
+  - ca-certificates
+
+runcmd:
+  - - bash
+    - -c
+    - |
+      set -euo pipefail
+      install -m 0600 /dev/null /var/log/comffee-cctv-install.log
+      exec >>/var/log/comffee-cctv-install.log 2>&1
+      export HOME=/root DEBIAN_FRONTEND=noninteractive GIT_TERMINAL_PROMPT=0
+      echo "Comffee CCTV install started $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+      if [ ! -e /opt/comffee-cctv ] && ! git -c protocol.allow=never -c protocol.https.allow=always \
+          -c advice.detachedHead=false clone --quiet --branch "$2" -- "$1" /opt/comffee-cctv; then
+        echo "Comffee CCTV install FAILED $(date -u +%Y-%m-%dT%H:%M:%SZ): could not download the code from $1 at version $2. The project must be public (no sign-in) and the version must exist."
+        exit 1
+      fi
+      if bash /opt/comffee-cctv/deploy/install.sh --host auto --setup-code "$3" </dev/null; then
+        echo "Comffee CCTV install finished $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+      else
+        echo "Comffee CCTV install FAILED $(date -u +%Y-%m-%dT%H:%M:%SZ). Run it again with: sudo bash /opt/comffee-cctv/deploy/install.sh --setup-code <code>"
+        exit 1
+      fi
+    - comffee-cctv-install
+    - "{{REPO_URL}}"
+    - "{{REPO_REF}}"
+    - "{{SETUP_CODE}}"

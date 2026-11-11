@@ -1,0 +1,30 @@
+/* Camera screens. Colours, type and shapes come from styles/theme.css tokens only. */
+
+/* A row of buttons that wraps on phones. */
+.cam-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Back on the left, the step's main action on the right. */
+.cam-step-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.cam-step-actions > :last-child {
+  margin-inline-start: auto;
+}
+
+/* Test results: label on the left, what was found on the right. */
+.cam-result {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+}

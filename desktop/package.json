@@ -1,0 +1,11 @@
+{
+  "name": "comffee-cctv-desktop",
+  "productName": "Comffee CCTV",
+  "version": "0.1.0",
+  "description": "Comffee CCTV for Windows: make a free cloud server and open your camera dashboards.",
+  "author": "Comffee CCTV contributors",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "main": "dist/main.cjs"
+}

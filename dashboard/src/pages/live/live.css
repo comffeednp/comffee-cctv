@@ -1,0 +1,228 @@
+/* Camera workspace: camera list, live video, playback. Colours, type and shapes come from styles/theme.css tokens only. */
+
+/* ---------------------------------------------------------------- layout */
+
+/* One column on phones (the camera list folds into a sheet at the top); list on the left from 1024 px. */
+.cam-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+  min-width: 0;
+}
+.cam-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
+@media (min-width: 1024px) {
+  .cam-workspace {
+    grid-template-columns: 280px minmax(0, 1fr);
+  }
+}
+
+/* ------------------------------------------------------------ camera list */
+
+.cam-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.cam-sheet-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-bg-soft);
+  color: var(--color-cream);
+  text-align: left;
+}
+.cam-sheet-toggle:hover {
+  background: var(--color-bg-card);
+}
+.cam-sheet-chevron {
+  flex-shrink: 0;
+  color: var(--color-mocha);
+  transition: transform var(--dur) var(--ease-standard);
+}
+.cam-sheet-open .cam-sheet-chevron {
+  transform: rotate(180deg);
+}
+@media (max-width: 1023px) {
+  .cam-sheet:not(.cam-sheet-open) .cam-sheet-body {
+    display: none;
+  }
+}
+@media (min-width: 1024px) {
+  .cam-sheet {
+    position: sticky;
+    top: calc(var(--topbar-h) + var(--space-5));
+    max-height: calc(100dvh - var(--topbar-h) - var(--space-6));
+    overflow-y: auto;
+  }
+  .cam-sheet-toggle {
+    display: none;
+  }
+}
+
+/* A camera row: the row itself picks the camera; the pencil beside it renames. */
+.cam-row {
+  display: flex;
+  align-items: center;
+}
+.cam-row > .list-row-inner {
+  flex: 1 1 auto;
+}
+.cam-row.list-row-selected {
+  background: var(--color-bg-elev);
+}
+.cam-row-rename {
+  flex-shrink: 0;
+  margin-right: var(--space-2);
+}
+.cam-row-status {
+  align-self: flex-start;
+}
+.cam-row-edit {
+  padding: var(--space-2) var(--space-3);
+}
+
+/* Rename in place. */
+.rename {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+.rename-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.rename-row > .k-field {
+  min-width: 0;
+}
+.cam-title-rename {
+  max-width: 560px;
+}
+
+.cam-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* ------------------------------------------------------------- live video */
+
+.live-tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+/* Two stacked video elements: the hidden one takes the next stream and the two swap once it shows a picture. */
+.live-frame > .live-video {
+  position: absolute;
+  inset: 0;
+}
+.live-video-back {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The whole picture of a grid tile opens the camera; messages over it let taps through except their buttons. */
+.live-open {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.live-open:focus-visible {
+  outline-offset: -2px;
+}
+.live-tile .media-center {
+  pointer-events: none;
+}
+.live-tile .media-center .key-cap {
+  pointer-events: auto;
+}
+
+/* Controls over the top right of the video. */
+.live-tools {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  display: flex;
+  gap: var(--space-1);
+}
+
+.live-frame:fullscreen {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  border-radius: 0;
+}
+
+.live-message {
+  max-width: 320px;
+}
+
+/* --------------------------------------------------------------- playback */
+
+.play-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+.play-controls-end {
+  margin-left: auto;
+}
+
+/* The timeline with Earlier and Later beside it when zoomed in. */
+.play-timeline {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.play-timeline > .icon-btn {
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+/* The last 30 days, scrolling inside the strip only. */
+.day-strip {
+  display: flex;
+  gap: var(--space-1);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  padding-bottom: var(--space-1);
+  scrollbar-width: thin;
+  min-width: 0;
+}
+.day-strip > .day-chip {
+  flex: 0 0 48px;
+  width: 48px;
+  min-height: 56px;
+  gap: 0;
+  scroll-snap-align: center;
+}
+.day-chip-weekday {
+  color: inherit;
+}
+.day-chip > .cal-day-mark {
+  bottom: 4px;
+}

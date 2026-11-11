@@ -1,0 +1,23 @@
+{
+  "dataDir": "/var/lib/comffee-cctv",
+  "listenHost": "127.0.0.1",
+  "listenPort": 8080,
+  "publicOrigin": "https://cctv.example.com",
+  "publicHost": "cctv.example.com",
+  "publicIp": "203.0.113.10",
+  "dashboardDir": "/opt/comffee-cctv/dashboard/dist",
+  "mediamtxApi": "http://127.0.0.1:9997",
+  "mediamtxRtsp": "rtsp://127.0.0.1:8554",
+  "mediamtxWebrtc": "http://127.0.0.1:8889",
+  "ffmpegPath": "/usr/bin/ffmpeg",
+  "ffprobePath": "/usr/bin/ffprobe",
+  "wireguard": {
+    "enabled": true,
+    "interface": "wg0",
+    "listenPort": 51820,
+    "hubAddress": "10.77.0.1/16",
+    "publicKey": "REPLACE_WITH_THE_HUB_WIREGUARD_PUBLIC_KEY"
+  },
+  "devInsecureCookies": false,
+  "bridgeDownloadUrl": null
+}

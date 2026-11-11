@@ -1,0 +1,38 @@
+{
+  "name": "comffee-cctv",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "description": "Open-source CCTV hub: live view, encrypted cloud recording with automatic deletion, and remote access for small businesses.",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev:hub": "node server/src/main.ts",
+    "dev:dashboard": "vite dashboard",
+    "build:dashboard": "vite build dashboard",
+    "build:bridge": "node bridge/build.mjs",
+    "dev:desktop": "node desktop/build.mjs && electron desktop",
+    "build:desktop": "node desktop/build.mjs && electron-builder --config desktop/electron-builder.yml --win",
+    "typecheck": "tsc -p tsconfig.json && tsc -p dashboard/tsconfig.json && tsc -p desktop/tsconfig.json && tsc -p desktop/tsconfig.renderer.json",
+    "test": "node --test \"server/test/**/*.test.ts\" \"bridge/test/**/*.test.ts\" \"shared/test/**/*.test.ts\" \"desktop/test/**/*.test.ts\""
+  },
+  "dependencies": {
+    "@fastify/static": "^10.1.10",
+    "@fastify/websocket": "^11.3.7",
+    "fastify": "^5.12.8",
+    "preact": "^11.2.0",
+    "qrcode-generator": "^2.0.4"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.6",
+    "@types/node": "^24.19.2",
+    "electron": "^45.3.0",
+    "electron-builder": "^26.18.0",
+    "esbuild": "^0.28.2",
+    "postject": "^1.0.0-alpha.6",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
+  }
+}

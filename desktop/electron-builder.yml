@@ -1,0 +1,38 @@
+# Windows installer for the Comffee CCTV desktop app.
+#   npm run build:desktop   (builds desktop/dist, then runs electron-builder with this file)
+# Paths are relative to the repository root (the project directory).
+appId: org.comffee.cctv
+productName: Comffee CCTV
+copyright: Copyright (c) Comffee CCTV contributors. MIT licence.
+directories:
+  app: desktop
+  output: desktop/release
+  buildResources: desktop/build
+files:
+  - package.json
+  - dist/**/*
+  # Everything is bundled into dist; no node_modules belong in the app.
+  - "!**/node_modules/**/*"
+electronDist: node_modules/electron/dist
+electronVersion: 45.3.0
+npmRebuild: false
+nodeGypRebuild: false
+asar: true
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: dashboard/public/icons/icon-512.png
+  # Unsigned: no signing certificate is configured.
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Comffee CCTV
+  deleteAppDataOnUninstall: false
+  artifactName: Comffee-CCTV-Setup-${version}.${ext}
+publish: null

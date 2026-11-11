@@ -1,0 +1,49 @@
+# Comffee CCTV bridge for Linux (systemd).
+#
+# 1. Copy the program:   sudo install -m 0755 comffee-cctv-bridge-linux-<arch> /usr/local/bin/comffee-cctv-bridge
+# 2. Write the config:    sudo install -d -m 0700 /etc/comffee-cctv-bridge
+#                         sudo nano /etc/comffee-cctv-bridge/bridge.json   (mode 0600, owned by root)
+#                         {"hub": "wss://cctv.example.com/bridge", "token": "<token>", "name": "office"}
+# 3. Install this unit:   sudo cp comffee-cctv-bridge.service /etc/systemd/system/
+#                         sudo systemctl daemon-reload && sudo systemctl enable --now comffee-cctv-bridge
+#
+# The service runs as a throwaway system user (DynamicUser). systemd hands it the config through
+# LoadCredential, so the token file itself stays readable by root only.
+
+[Unit]
+Description=Comffee CCTV bridge
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/comffee-cctv-bridge
+LoadCredential=bridge.json:/etc/comffee-cctv-bridge/bridge.json
+DynamicUser=yes
+Restart=always
+RestartSec=5
+
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectProc=invisible
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+SystemCallArchitectures=native
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

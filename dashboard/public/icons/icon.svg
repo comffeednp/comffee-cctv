@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>Comffee CCTV</title>
+  <rect width="512" height="512" rx="112" fill="#1c1714"/>
+  <rect x="96" y="150" width="320" height="50" rx="16" fill="#ffb547"/>
+  <path d="M112 212 A144 144 0 0 0 400 212 Z" fill="#ffb547"/>
+  <circle cx="256" cy="276" r="60" fill="#1c1714"/>
+  <circle cx="236" cy="256" r="14" fill="#f4ecdf"/>
+</svg>

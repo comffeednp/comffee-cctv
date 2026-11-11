@@ -1,0 +1,128 @@
+/* Desktop app frame. Colours, type and shapes come from the dashboard's theme tokens only;
+   this file sets layout. */
+
+.desk-app {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The slim bar above a server's dashboard. Its height must match TOP_BAR_HEIGHT in src/main/views.ts. */
+.desk-topbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-nav);
+  box-sizing: border-box;
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--gutter);
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-line);
+}
+.desk-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+  color: var(--color-cream);
+}
+.desk-brand img {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+.desk-switcher {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 360px;
+}
+.desk-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+@media (max-width: 719px) {
+  .desk-wide,
+  .desk-brand-name {
+    display: none;
+  }
+}
+@media (min-width: 720px) {
+  .desk-narrow {
+    display: none;
+  }
+}
+
+.desk-content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Shown under a server's dashboard: loading, or why it could not open. */
+.desk-view-status {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) var(--gutter);
+}
+.desk-view-status:focus {
+  outline: none;
+}
+
+/* Pasted configuration text. */
+.desk-textarea {
+  height: auto;
+  min-height: calc(var(--space-7) * 3);
+  padding: var(--space-3);
+  resize: vertical;
+  white-space: pre;
+  overflow: auto;
+}
+
+/* A read-only file name with its Choose button. */
+.desk-file-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.desk-file-row > :first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* What will be made, and creation progress. */
+.desk-plan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.desk-plan > li {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.desk-step-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+.desk-step-dot {
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-line-bright);
+}

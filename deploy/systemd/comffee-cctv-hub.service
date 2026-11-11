@@ -1,0 +1,50 @@
+# Comffee CCTV hub (web dashboard, API, recording sweeper, connectors).
+# deploy/install.sh fills the {{...}} placeholders and installs this file into /etc/systemd/system.
+[Unit]
+Description=Comffee CCTV hub
+Documentation=file://{{APP_DIR}}/docs/OPERATIONS.md
+After=network-online.target wg-quick@wg0.service comffee-cctv-mediamtx.service
+Wants=network-online.target wg-quick@wg0.service comffee-cctv-mediamtx.service
+
+[Service]
+Type=simple
+User=comffee-cctv
+Group=comffee-cctv
+WorkingDirectory={{APP_DIR}}
+Environment=TZ=UTC
+Environment=NODE_ENV=production
+Environment=COMFFEE_CCTV_CONFIG={{CONFIG_PATH}}
+ExecStart={{NODE_BIN}} {{APP_DIR}}/server/src/main.ts
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+UMask=0077
+LimitNOFILE=65536
+
+# Only capability: manage the WireGuard interface and its routes (wg, ip).
+AmbientCapabilities=CAP_NET_ADMIN
+CapabilityBoundingSet=CAP_NET_ADMIN
+NoNewPrivileges=yes
+
+# File system: everything read-only except the data folder.
+ProtectSystem=strict
+ReadWritePaths={{DATA_DIR}}
+PrivateTmp=yes
+ProtectHome=yes
+PrivateDevices=yes
+
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictSUIDSGID=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+LockPersonality=yes
+SystemCallArchitectures=native
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+
+[Install]
+WantedBy=multi-user.target

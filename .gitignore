@@ -1,0 +1,12 @@
+node_modules/
+dashboard/dist/
+dist/
+.cache/
+data/
+*.db
+*.db-*
+.env*
+*.log
+bridge/dist/
+desktop/dist/
+desktop/release/

@@ -1,0 +1,50 @@
+# Comffee CCTV web front door (Caddy).
+# deploy/install.sh replaces {{HOST}} with the dashboard address and writes this file to
+# /etc/caddy/Caddyfile. Caddy gets and renews the HTTPS certificate for that address by itself;
+# TCP ports 80 and 443 must be reachable from the internet for that.
+
+{
+	servers {
+		# HTTP/3 would need UDP 443, which the firewall keeps closed.
+		protocols h1 h2
+	}
+}
+
+{{HOST}} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+	}
+
+	# The MediaMTX sign-in hook and anything else under /internal is only for programs on
+	# this server. It is never reachable through the web address.
+	@internal path /internal /internal/*
+	handle @internal {
+		respond 404
+	}
+
+	# Live video. Only the WHEP request (/live/<path>/whep) and its session address
+	# (/live/<path>/whep/<session>) reach MediaMTX, with /live removed. MediaMTX's own player
+	# pages and every other MediaMTX address stay closed.
+	@whep path_regexp ^/live/[A-Za-z0-9_]+/whep(/[A-Za-z0-9-]+)?$
+	handle @whep {
+		uri strip_prefix /live
+		reverse_proxy 127.0.0.1:8889 {
+			# MediaMTX answers with a session address without /live; put the prefix back.
+			header_down Location ^/ /live/
+			# The dashboard is on the same address, so cross-site access is never needed.
+			header_down -Access-Control-Allow-Origin
+			header_down -Access-Control-Allow-Credentials
+			header_down -Access-Control-Allow-Headers
+			header_down -Access-Control-Allow-Methods
+			header_down -Access-Control-Expose-Headers
+		}
+	}
+
+	# Everything else (dashboard, API, bridge connections) goes to the hub.
+	handle {
+		reverse_proxy 127.0.0.1:8080
+	}
+}

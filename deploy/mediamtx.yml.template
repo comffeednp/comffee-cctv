@@ -1,0 +1,123 @@
+# Comffee CCTV base configuration for MediaMTX v1.21.3 (pinned release).
+# Every key below is taken from the sample mediamtx.yml of v1.21.3.
+#
+# deploy/install.sh fills the placeholders:
+#   {{DATA_DIR}}   hub data folder, for example /var/lib/comffee-cctv
+#   {{PUBLIC_IP}}  public IPv4 of the hub, sent to browsers as the WebRTC address
+#
+# Camera paths are not listed here: the hub adds, changes and removes them through the control API
+# (with its internal credentials) and reconciles them every 60 seconds.
+# MediaMTX must run with TZ=UTC so recording file names are in UTC.
+
+###############################################
+# General
+
+logLevel: info
+logDestinations: [stdout]
+logStructured: false
+readTimeout: 10s
+writeTimeout: 10s
+writeQueueSize: 512
+udpMaxPayloadSize: 1452
+runOnConnect:
+runOnConnectRestart: false
+runOnDisconnect:
+
+###############################################
+# Authentication: every request is checked by the hub, nothing excluded.
+
+authMethod: http
+authHTTPAddress: http://127.0.0.1:8080/internal/mediamtx-auth
+authHTTPFingerprint:
+authHTTPExclude: []
+
+###############################################
+# Control API (local only; used by the hub)
+
+api: true
+apiAddress: 127.0.0.1:9997
+apiEncryption: false
+apiAllowOrigins: []
+apiTrustedProxies: []
+
+###############################################
+# Servers that are not used
+
+metrics: false
+pprof: false
+playback: false
+rtmp: false
+hls: false
+srt: false
+moq: false
+
+###############################################
+# RTSP (local only, TCP only): sources for the 720p transcoder and its output
+
+rtsp: true
+rtspTransports: [tcp]
+rtspEncryption: "no"
+rtspAddress: 127.0.0.1:8554
+rtspAuthMethods: [basic]
+rtspTrustedProxies: []
+
+###############################################
+# WebRTC (WHEP live view). Caddy forwards /live/<path>/whep and /live/<path>/whep/<session>
+# here with the /live prefix removed. Media flows over UDP 8189 to the public IP.
+
+webrtc: true
+webrtcAddress: 127.0.0.1:8889
+webrtcEncryption: false
+# The dashboard calls WHEP on its own origin through Caddy, so no cross-origin access is granted.
+webrtcAllowOrigins: []
+webrtcTrustedProxies: [127.0.0.1]
+webrtcLocalUDPAddress: :8189
+webrtcLocalTCPAddress: ""
+webrtcIPsFromInterfaces: false
+webrtcIPsFromInterfacesList: []
+webrtcIPsFromInterfacesExcludeList: []
+webrtcAdditionalHosts: [{{PUBLIC_IP}}]
+webrtcICEServers2: []
+webrtcSTUNGatherTimeout: 5s
+webrtcHandshakeTimeout: 10s
+webrtcTrackGatherTimeout: 2s
+
+###############################################
+# Defaults for every path the hub creates
+
+pathDefaults:
+  source: publisher
+  sourceOnDemand: false
+  sourceOnDemandStartTimeout: 10s
+  sourceOnDemandCloseAfter: 10s
+  maxReaders: 0
+  useAbsoluteTimestamp: false
+  alwaysAvailable: false
+
+  # Recording: plain fMP4 in 5-minute segments under raw/. The hub encrypts each finished segment
+  # into the vault and deletes the plain file, so MediaMTX never deletes anything itself.
+  record: false
+  recordPath: {{DATA_DIR}}/raw/%path/%Y-%m-%d_%H-%M-%S-%f
+  recordFormat: fmp4
+  recordPartDuration: 1s
+  recordMaxPartSize: 50M
+  recordSegmentDuration: 5m
+  recordDeleteAfter: 0s
+
+  overridePublisher: true
+
+  # Camera streams are always pulled over TCP.
+  rtspTransport: tcp
+  rtspAnyPort: false
+
+  runOnInit:
+  runOnInitRestart: false
+  runOnDemand:
+  runOnDemandRestart: false
+  runOnDemandStartTimeout: 10s
+  runOnDemandCloseAfter: 10s
+
+###############################################
+# No static paths: the hub manages c<cameraId> and c<cameraId>_src through the API.
+
+paths: {}
