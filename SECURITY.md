@@ -21,9 +21,11 @@ public. Only the newest release gets security fixes.
 
 - **The dashboard from the internet.** Only HTTPS (80 and 443), the WireGuard port (UDP 51820) and
   the live video port (UDP 8189) are open. Everyone signs in with a password and a mandatory
-  two-step code. Repeated wrong tries lock the account for 15 minutes and slow down the address
-  they come from. Session cookies are HttpOnly, Secure and SameSite=Strict, every changing request
-  needs a custom header, and pages run under a strict Content Security Policy.
+  two-step code. Wrong passwords are limited per name and network (5 in 15 minutes) and per name
+  from everywhere (100 in 15 minutes), wrong two-step codes lock the account for 15 minutes, and an
+  address with 20 failures waits 15 minutes. Session cookies are HttpOnly, Secure and
+  SameSite=Strict, every changing request needs a custom header, and pages run under a strict
+  Content Security Policy.
 - **Stored recordings.** Each 5-minute piece is encrypted with a fresh AES-256-GCM key, which is
   locked with the owner's RSA-OAEP 3072 public key. The private half (the recovery key) is made in
   the owner's browser and never reaches the server. A stolen disk or backup does not reveal
@@ -58,6 +60,14 @@ public. Only the newest release gets security fixes.
 - **With the "direct" connection** (hub on the same network as the cameras) camera video crosses
   that network unencrypted, as with any RTSP camera.
 - **Flooding attacks** against the server's internet connection are not prevented.
+- **Use a different camera login at each location.** The media server follows an RTSP redirect
+  from a camera address, so a device that takes over a camera address at one location might point
+  the hub at a camera of another location. Different camera logins per location stop that camera
+  from opening.
+- **The default web address trusts sslip.io.** Without your own domain the hub uses
+  `<public-ip-with-dashes>.sslip.io`, a free public name service. Whoever controls sslip.io could get
+  a certificate for that name and sit between you and the hub. Use your own domain (`--host`) for
+  stronger protection.
 - **Updates trust the project's git repository** over HTTPS; commits and tags are not signature
   checked by the updater.
 

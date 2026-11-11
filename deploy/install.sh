@@ -346,6 +346,9 @@ install_mediamtx() {
 key_fingerprint() {
   local out
   out=$(GNUPGHOME="$TMP/gnupg" gpg --batch --show-keys --with-colons "$1" 2>/dev/null) || return 1
+  # Exactly one primary key: the whole file goes into apt's keyring, so a second key in it would let apt
+  # trust packages signed by that key too.
+  [ "$(awk -F: '$1 == "pub"' <<<"$out" | wc -l)" -eq 1 ] || return 1
   awk -F: '$1 == "fpr" && !done { print $10; done = 1 }' <<<"$out"
 }
 

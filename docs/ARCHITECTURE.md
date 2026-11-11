@@ -175,7 +175,10 @@ use, and have a purpose: `login`, `enroll`, `setup` or `reset`.
 
 ### Throttling
 
-- 5 failures (password or code) for one user within 15 minutes lock that user for 15 minutes
+- Wrong passwords are counted per typed name (stored hashed, the same for unknown names): 5 from one IP
+  within 15 minutes block that name from that IP for 15 minutes, and 100 from all IPs block it
+  everywhere. One network therefore cannot lock an account out for everyone.
+- 5 wrong 2-step codes for one user within 15 minutes lock that user for 15 minutes
   (`users.locked_until`).
 - 20 failures from one IP within 15 minutes give that IP 429 for 15 minutes (`ip_failures`, kind
   `login`).
